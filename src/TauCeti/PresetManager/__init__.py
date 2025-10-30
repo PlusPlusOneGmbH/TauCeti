@@ -6,6 +6,7 @@ Saveversion : 2023.12000
 Info Header End'''
 from pathlib import Path
 ToxFile = Path( Path(  __file__ ).parent, "PresetManager.tox" )
+DefaultGlobalOpShortcut = "TAUCETI_PRESETMANAGER"
 
 
 from typing import TYPE_CHECKING, Union

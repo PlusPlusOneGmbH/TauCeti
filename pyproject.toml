@@ -5,6 +5,7 @@ description = "Presetmanagement and parameer manipulation in TouchDesigner."
 readme = "README.md"
 license-files = ["LICENSE"]
 requires-python = ">=3.11"
+
 authors = [
     {name = "Wieland Hilker", email = "wieland@plusplus.one"},
 ]
