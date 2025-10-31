@@ -11,12 +11,12 @@ This project implements ideas and features of TD_Package, a proposal by PlusPlus
 
 All modules (PresetManager and Tweener) implement the ToxFile member. Refference the ToxFile in the external-parameter of any COMP and force a reload.
 
-```mod.TauCeti.Tweener.ToxFile```
+```mod.tdpTauCeti.Tweener.ToxFile```
 will return the path to the ToxFile.
 
 For easy code compleation in your IDE use the exported Typying member of the module.
 ```python
-from TauCeti.Tweener import Typing as TweenerTyping
+from tdpTauCeti.Tweener import Typing as TweenerTyping
 
 tweener_comp:TweenerTyping = op("Tweener")
 ```
