@@ -25,3 +25,13 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 "*" = ["*.tox"]
+
+[dependency-groups]
+dev = [
+    "monkeybrain>=0.2.3",
+]
+
+
+[tool.touchdesigner]
+projectfile = "TauCeti_PresetSystem.toe"     # Adjust if you rename the base project.
+enforce-version="latest-build" # Options: strict, closest-build, latest-build, latest-version
