@@ -6,7 +6,7 @@
 Name : extCuelist
 Author : Wieland PlusPlusOne@AMB-ZEPH15
 Saveorigin : TauCeti_PresetSystem.toe
-Saveversion : 2023.12000
+Saveversion : 2023.12480
 Info Header End'''
 class extCuelist:
 	"""
