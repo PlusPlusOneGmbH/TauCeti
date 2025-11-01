@@ -4,7 +4,7 @@
 Name : extTauCetiManager
 Author : Wieland PlusPlusOne@AMB-ZEPH15
 Saveorigin : TauCeti_PresetSystem.toe
-Saveversion : 2023.12000
+Saveversion : 2023.12480
 Info Header End'''
 
 TDFunctions = op.TDModules.mod.TDFunctions
@@ -262,7 +262,8 @@ class extTauCetiManager:
 			
 			self.ownerComp.par.Evalref.val = block.par.Operator.eval()
 			target_operator = self.ownerComp.par.Evalref.eval()
-			if target_parameter is None: 
+			
+			if target_operator is None: 
 				self.logger.Log( "Target operator is None. Skipping.", self.ownerComp.par.Evalref.val )
 				continue
 			target_parameter = target_operator.par[ block.par.Parname.eval() ]

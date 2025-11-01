@@ -1,13 +1,11 @@
-
-
-
-
 '''Info Header Start
 Name : extCuelist
 Author : Wieland PlusPlusOne@AMB-ZEPH15
 Saveorigin : TauCeti_PresetSystem.toe
 Saveversion : 2023.12480
 Info Header End'''
+
+
 class extCuelist:
 	"""
 	extCuelist description
@@ -15,70 +13,58 @@ class extCuelist:
 	def __init__(self, ownerComp):
 		# The component to which this extension is attached
 		self.ownerComp = ownerComp
-		self.data = self.ownerComp.op("dictParser")
 		#self.cue_table = self.ownerComp.op('cuelist')
 		
 		# if self.ownerComp.par.Manager.eval() is not None: self.Recall_Cue( "", time = 0 )
 	
 	@property
+	def MenuDefinition(self):
+
+		return tdu.ParMenu( [ 
+			f"{block.index} : {block.par.Name.eval()} [{block.par.Preset.eval()}]" if block.par.Name.eval() else f"{block.index} : {block.par.Preset.eval()}"
+			for block 
+			in self.ownerComp.op("Cues_RepoMaker").Repo.seq.Cues 
+		] )
+
+	@property
 	def selected_cue(self):
-		return self.ownerComp.par.Selectedcue.eval()
+		return self.ownerComp.par.Selectedcue.menuIndex
 		
 	@property
 	def loop(self):
 		return self.ownerComp.par.Loop.eval()
 
+	@property
+	def data(self):
+		return self.ownerComp.op("Cues_RepoMaker").Repo.seq.Cues
+	
 	def get_engine(self):
 		return self.ownerComp.par.Manager.eval()
 
+	def Reorder(self, sourceIndex:int, targetIndex:int):	
+		raise NotImplementedError()
 
+		source_block = self.data[ sourceIndex - 1 ]
+		new_block = self.data.insertBlock( targetIndex  )
+		new_block.par.Preset.val = source_block.par.Preset.eval()
+		new_block.par.Fadetime.val = source_block.par.Fadetime.eval()
+		new_block.par.Name.val = source_block.par.Name.eval()
+		# self.data.destroyBlock( source_block.index )
+		self.ownerComp.op("Cues_RepoMaker").Repo.cook( force = True)
 
-	def Reorder(self, sourceIndex, targetIndex):
-		if sourceIndex > targetIndex:
-			nextIndex = targetIndex
-			prevIndex = targetIndex - 1
-		else :
-			nextIndex = targetIndex + 1
-			prevIndex = targetIndex
-
-		nextItem = self.data.GetItem( 
-			min( nextIndex , self.data.NumItems ),
-			rows = "id"
-	    )
-
-		prevItem = self.data.GetItem( 
-			max(1, prevIndex  ),
-			rows = "id"
-		)
-		debug( prevItem )
-		prev_index = float(prevItem["id"]) * bool(prevItem["_tableIndex"] != 1)
-		next_index = float(nextItem["id"]) + 2 * bool(nextItem["_tableIndex"] == self.data.NumItems)
-		
-
-		new_id = f"{(next_index + prev_index) / 2:.2f}"
-
-		self.data.UpdateItem(sourceIndex, {
-			**self.data.GetItem(sourceIndex),
-			"id" : new_id}
-		)
-		self._sort()
-		
+		# 2025 Exclusive :(
+		# self.data.moveBlock( sourceIndex, targetIndex)	
 		return 
 
-	def _sort(self):
-		self.data.SortTable( key = lambda row: float(row[0]))
-		self.Select_Next_Cue()
 
 	def Append_Cue(self, preset, time = 5):
-		self.data.AddItem({
-			"id" : math.floor( 
-				float(self.data.GetItem(-1)["id"])
-			) + 1 if self.data.NumItems else "1",
-			"preset" : preset,
-			"time" : time
-		})
-		self._sort()
-
+		debug("APpending cue")
+		self.data.numBlocks += 1
+		new_block = self.data[ self.data.numBlocks - 1]
+		
+		new_block.par.Preset.val = preset
+		new_block.par.Fadetime.val = time
+		
 
 	def Record_Cue(self, preset, time = 5):
 		self.Append_Cue( 
@@ -86,76 +72,50 @@ class extCuelist:
 			time=time
 		)
 
-	def Delete_Cue(self, id):
-		self.data.DeleteItem( id )
-		self.Select_Next_Cue()
+	def Delete_Cue(self, index):
+		self.data.destroyBlock( index )
 	
-	def Select_Cue(self, id):
-		self.ownerComp.par.Selectedcue.val = id
+	def Select_Cue(self, index):
+		self.ownerComp.par.Selectedcue.menuIndex = index
 		return
 
 	def Select_Next_Cue(self):
-		if not self.data.NumItems: return
-		nextCueIndex = self.ownerComp.par.Activecue.menuIndex + 1
-		if self.loop: nextCueIndex %= len( self.ownerComp.par.Selectedcue.menuNames )
-		self.Select_Cue( 
-			self.ownerComp.par.Selectedcue.menuNames[ nextCueIndex ]
-		)
+		if self.loop: 
+			self.Select_Cue( 
+				(self.ownerComp.par.Selectedcue.menuIndex + 1) % len( self.ownerComp.par.Selectedcue.menuNames )
+			)
+		else:
+			self.Select_Cue( 
+				(self.ownerComp.par.Selectedcue.menuIndex + 1)
+			)
 	
 
-	def Recall_Cue(self, cue_id, time = None):
-		cueData = self.data.GetItem( cue_id )
+	def Recall_Cue(self, index, time = None):
+		cueData = self.data[ index ]
 		
-		self.get_engine().Recall_Preset(cueData["preset"], time or cueData["time"])
+		self.get_engine().Recall_Preset(
+			cueData.par.Preset.eval(), 
+			time or cueData.par.Fadetime.eval()
+		)
 
-		self.ownerComp.par.Activecue.val = cueData["id"]
+		self.ownerComp.par.Activecue.menuIndex = cueData.index
 		self.Select_Next_Cue()
 
 		self.ownerComp.op("callbackManager").Do_Callback(
 			"onGo",
-			cue_id,
+			index,
 			self.selected_cue,
-			cueData["preset"],
-			self.get_engine().Get_Preset_Name(cueData["preset"]),
-			cueData["time"]
-		)
-	
-		eventId = self.ownerComp.op("event1").createEvent(
-			attackTime = cueData["time"]
-		)
-		self.ownerComp.op("recalled_cues").appendRow(
-			[eventId, cue_id]
+			cueData.par.Preset.eval(),
+			self.get_engine().Get_Preset_Name(cueData.par.Preset.eval()),
+			cueData.par.Fadetime.eval()
 		)
 
-	def _finalize_cue(self, eventId):
-		cueId = self.ownerComp.op("recalled_cues")[eventId, "cueId"].val
-		cueData = self.data.GetItem(cueId)
-		presetId = cueData["preset"]
-		presetName = self.get_engine().Get_Preset_Name(presetId)
 
-		self.ownerComp.op("callbackManager").Do_Callback(
-			"onDone",
-			cueId,
-			presetId,
-			presetName
-		)
+	def Assign_Preset(self, index, preset):
+		self.data[index].par.Preset.val = preset
 
-	def Update_Cue(self, id, dataset:dict):
-		self.data.UpdateItem(id, {
-			**self.data.GetItem(id),
-			**dataset}
-		)
-
-	def Assign_Preset(self, id, preset):
-		self.Update_Cue(id, {"preset" : preset})
-
-	def Assign_Time(self, id, time):
-		self.Update_Cue(id, {"time" : time})
-
-	def Assign_Id(self, id, newId):
-		self.Update_Cue(id, {"id" : newId})
-		self.data.SortTable( key = lambda row: float(row[0]))
-		self.Select_Next_Cue()
+	def Assign_Time(self, index, time):
+		self.data[index].par.Fadetime.val = time
 
 	def Go(self):
 		self.Recall_Cue(self.selected_cue)
