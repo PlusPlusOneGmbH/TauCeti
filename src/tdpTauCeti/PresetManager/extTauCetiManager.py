@@ -4,7 +4,7 @@
 Name : extTauCetiManager
 Author : Wieland PlusPlusOne@AMB-ZEPH15
 Saveorigin : TauCeti_PresetSystem.toe
-Saveversion : 2023.12000
+Saveversion : 2023.12480
 Info Header End'''
 
 TDFunctions = op.TDModules.mod.TDFunctions
@@ -191,6 +191,12 @@ class extTauCetiManager:
 			self.Push_Stack_To_Presets()
 		return preset_id
 
+	@property
+	def preset_comps(self):
+		return [
+			preset_comp for preset_comp in self.preset_folder.findChildren( depth = 1) if hasattr( preset_comp.seq, "Items" )
+		]
+
 	def _create_preset(self, name, tag,preset_id):
 		new_preset = self.preset_folder.copy( self.prefab, name =preset_id)
 		new_preset.par.Tag 	= tag or self.ownerComp.par.Tag.eval()
@@ -262,9 +268,10 @@ class extTauCetiManager:
 			
 			self.ownerComp.par.Evalref.val = block.par.Operator.eval()
 			target_operator = self.ownerComp.par.Evalref.eval()
-			if target_parameter is None: 
+			if target_operator is None: 
 				self.logger.Log( "Target operator is None. Skipping.", self.ownerComp.par.Evalref.val )
 				continue
+
 			target_parameter = target_operator.par[ block.par.Parname.eval() ]
 			
 			if target_parameter is None: 
@@ -306,21 +313,33 @@ class extTauCetiManager:
 			Pushes all the parameters of the current stack to all presets.
 			When using "overwrite" mode all parameters will b overwritten. CAUTION!
 		"""
-		raise NotImplementedError()
-		_stack_comp = self.ownerComp.op("Stack_RepoMaker").Repo
-	
-		_preset_comp_dict = { preset_comp.name : preset_comp for preset_comp in self.preset_folder.findChildren( depth = 1, parName = "Name")}
-		_stack_element_dict = { block_item.Parname.eval() : block_item for block_item in _stack_comp}
-		preset_comps = [ _preset_comp_dict[key] for key in tdu.match( _presets, _preset_comp_dict.keys()) ]
-		stack_blocks = [ _stack_element_dict[key] for key in tdu.match( _stackelements, _stack_element_dict.keys()) ]
-		for preset_comp in preset_comps:
-			preset_blocks = {
-				value_block.par.Parameter.eval() : value_block for value_block in preset_comp.seq.Items
-			}
-			for stack_block in stack_blocks:
-				if stack_block.par.Parameter.eval() in preset_blocks and mode != "overwrite": continue
-				# my braid hurst. contunue hiere later...
+		
+		stack_data =  self.ownerComp.op("callbackManager").Do_Callback("getStack", self.ownerComp) or  self.stack.Get_Stack_Dict_List() 
+		for preset_comp in self.preset_comps:
+
+			preset_data_seq = preset_comp.seq.Items
+
+			for index, item in enumerate( stack_data ):
+				if item is None: continue
+				self.ownerComp.par.Evalref.val = item["Operator"]
+				stack_operator = self.ownerComp.par.Evalref.eval()
+				if stack_operator is None: continue
+				stack_parameter = stack_operator.par[ item["Parname"] ]
+				if stack_operator is None: continue
+
+				for preset_seq_par in preset_data_seq:
+					self.ownerComp.par.Evalref.val 	= preset_seq_par.par.Operator.eval()
+					preset_operator					= self.ownerComp.par.Evalref.eval()
+					if stack_operator != preset_operator: continue
+					preset_parameter = preset_operator.par[ preset_seq_par.par.Parname.eval() ]
+					if preset_parameter is None: continue
+					preset_seq_par.par.Value.val = stack_parameter.eval()
+					break
+				else:
+					pass
+				# Append the data data!
 				
+
 
 		return
 
