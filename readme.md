@@ -157,7 +157,32 @@ Marks the parameter to be preloadable. A call to the ```Preload( preset_id )``` 
 
 This could be used to set colorvalue before fading in. 
 
+### Push
+Pushing allows to send the current stack to all presets stored, updating them with default values.
+
+### Python API
+The manager can be controlled via an extensive python API. The most important ones of course are
+```python
+Store_Preset( name:str, tag = '',preset_id = "") -> str:
+# Stores a preset with the given parameters and returns the preset_id.
+# Not that name and id are different things. The name is mutable and only a user-facing representation.
+# A name can containg spaces and more and can be change.
+# The ID is static and is required to refference a preset.
+# Depending on the selected mode the id will be either completly random or based on the name
+# passed to the method.
+
+Recall_Preset( preset_id:str, time:float, curve = "s", load_stack = False):
+# Recalls the preset in the given time. 
+# Load Stack will recall the parameters and settings of the preset and store them in to the stack.
+
+
+Push_Stack_To_Presets( preset_id:str)
+# Saves all values of parameters currently on the stack
+# that are not present.
+
+Rename( preset_id:str, new_name:str)
+# Renames the preset but DOES NOT CHANGE THE ID!
+```
 
 To be added:
 - Parameter
-- Python API
