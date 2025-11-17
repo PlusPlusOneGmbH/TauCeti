@@ -128,20 +128,20 @@ class extTauCetiManager:
 		"""
 			Returns the COMP defining the presets given thepreset_id.
 		"""
-		return self.preset_folder.op(id) or self.ownerComp.op("emptyPreset")
+		return self.preset_folder.op(preset_id) or self.ownerComp.op("emptyPreset")
 
 	def Get_Preset_Name(self,preset_id:str) -> str:
 		"""
 			Return the Name of a Preset bypreset_id.
 		"""
-		return self.Get_Preset_Comp(id).par.Name.eval()
+		return self.Get_Preset_Comp(preset_id).par.Name.eval()
 
 	def Get_Preview(self,preset_id:str) -> TOP:
 		"""
 			Return the TOP showing the preview of the Presets.
 		"""
 
-		return self.Get_Preset_Comp(id).op("preview")
+		return self.Get_Preset_Comp(preset_id).op("preview")
 
 	def Store_Preset(self, name:str, tag = '',preset_id = "") -> str:
 		"""
