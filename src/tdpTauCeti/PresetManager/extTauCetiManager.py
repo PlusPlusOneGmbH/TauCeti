@@ -15,6 +15,8 @@ from typing import Literal, Union
 from typing import  TYPE_CHECKING, Any
 from td import *
 
+from copy import copy
+
 if TYPE_CHECKING:   
     from TauCeti.Tweener.extTweener import extTweener
 else:
@@ -154,9 +156,9 @@ class extTauCetiManager:
 		preset_id =preset_id or tdu.legalName( str( uuid.uuid4() ) )
 
 		#checking for existing preset
-		existing_preset 	= self.preset_folder.op( preset_id ) 
+		existing_preset_comp 	= self.preset_folder.op( preset_id ) 
 
-		if existing_preset:
+		if existing_preset_comp:
 			handle_override = self.ownerComp.par.Handleoverride.eval()
 			if handle_override == "Request":
 				if not ui.messageBox(
@@ -166,8 +168,15 @@ class extTauCetiManager:
 				): return ""
 			if handle_override == "Exception":
 				raise Exception(f"Preset {preset_id} {name} already exists!")
+		
 		#calling update or create, depending on if a preset already exists. 
-		preset_comp 		= (self._update_preset if existing_preset else self._create_preset)(name, tag, preset_id)
+		if existing_preset_comp:
+			existing_preset_comp.destroy()
+
+		#preset_comp 		= (self._update_preset if existing_preset else self._create_preset)(name, tag, preset_id)
+		# Upadting is for a later time of day. 
+		# We should implement the Push here actually!
+		preset_comp = self._create_preset( name, tag, preset_id )
 
 		#storing the preview
 		self.store_prev( preset_comp )
@@ -313,31 +322,43 @@ class extTauCetiManager:
 			Pushes all the parameters of the current stack to all presets.
 			When using "overwrite" mode all parameters will b overwritten. CAUTION!
 		"""
-		
+
 		stack_data =  self.ownerComp.op("callbackManager").Do_Callback("getStack", self.ownerComp) or  self.stack.Get_Stack_Dict_List() 
 		for preset_comp in self.preset_comps:
 
 			preset_data_seq = preset_comp.seq.Items
-
-			for index, item in enumerate( stack_data ):
-				if item is None: continue
-				self.ownerComp.par.Evalref.val = item["Operator"]
+			append_data = []
+			for stack_item in stack_data :
+				
+				if stack_item is None: continue
+				self.ownerComp.par.Evalref.val = stack_item["Operator"]
 				stack_operator = self.ownerComp.par.Evalref.eval()
 				if stack_operator is None: continue
-				stack_parameter = stack_operator.par[ item["Parname"] ]
-				if stack_operator is None: continue
+
+				stack_parameter = stack_operator.par[ stack_item["Parname"] ]
+				if stack_parameter is None: continue
 
 				for preset_seq_par in preset_data_seq:
-					self.ownerComp.par.Evalref.val 	= preset_seq_par.par.Operator.eval()
+					self.ownerComp.par.Evalref.val 	= preset_seq_par.par.Operator.val
 					preset_operator					= self.ownerComp.par.Evalref.eval()
 					if stack_operator != preset_operator: continue
+
 					preset_parameter = preset_operator.par[ preset_seq_par.par.Parname.eval() ]
 					if preset_parameter is None: continue
-					preset_seq_par.par.Value.val = stack_parameter.eval()
+	
+
+					if hash( preset_parameter ) != hash( stack_parameter ): continue
+					if mode == "overwrite": 
+						preset_seq_par.par.Value.val = stack_parameter.eval()
 					break
 				else:
-					pass
-				# Append the data data!
+					append_data.append( stack_item )
+			
+			for new_value_item in append_data:
+				new_block = preset_comp.seq.Items.insertBlock(0)
+				new_value_item["Operator"] = self.ownerComp.relativePath( new_value_item["Operator"] ) if self.ownerComp.par.Pathrelation.eval() == "Relative" else new_value_item["Operator"].path
+				for key, value in new_value_item.items():
+					setattr( new_block.par, key, value)
 				
 
 

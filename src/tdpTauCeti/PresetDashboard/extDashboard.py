@@ -1,12 +1,11 @@
-
-
-
 '''Info Header Start
 Name : extDashboard
 Author : Wieland PlusPlusOne@AMB-ZEPH15
 Saveorigin : TauCeti_PresetSystem.toe
-Saveversion : 2023.12000
+Saveversion : 2023.12480
 Info Header End'''
+
+
 import uuid
 
 class extDashboard:
@@ -70,7 +69,7 @@ class extDashboard:
 	def Record(self, row, col):
 		index = str( uuid.uuid1() ).split('-')[0]
 		tag = self.ownerComp.par.Tag.eval()
-		self.map_table[row, col].val = self.Get_Engine().Store_Preset( index, tag = tag, id = self.map_table[row, col].val)
+		self.map_table[row, col].val = self.Get_Engine().Store_Preset( index, tag = tag, preset_id = self.map_table[row, col].val)
 		return
 
 	def Start_Rename(self, preset, row, col):
