@@ -3,36 +3,38 @@ name = "tdp-TauCeti"
 version = "5.1.4"
 description = "Presetmanagement and parameer manipulation in TouchDesigner."
 readme = "README.md"
-license-files = ["LICENSE"]
+license-files = [ "LICENSE",]
 requires-python = ">=3.11"
-
-authors = [
-    {name = "Wieland Hilker", email = "wieland@plusplus.one"},
-]
-keywords = ["TouchDesigner", "Parameter", "Tweener", "2023.12000"]
+keywords = [ "TouchDesigner", "Parameter", "Tweener", "2023.12000",]
 dependencies = []
+[[project.authors]]
+name = "Wieland Hilker"
+email = "wieland@plusplus.one"
+
+[build-system]
+requires = [ "setuptools>=61.0",]
+build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [ "monkeybrain>=0.3.0",]
 
 [project.urls]
 Website = "https://plusplus.one"
 Repository = "https://github.com/PlusPlusOneGmbH/TD_TauCeti_Presetsystem"
 
-[build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.monkeybrain]
+projectfile = "TauCeti_PresetSystem.toe"
+enforce-version = "latest-build"
+touchdesigner-version = "2025.32280"
 
 [tool.setuptools.package-data]
-"*" = [ "*.tox" ]
+"*" = [ "*.tox",]
 
-[dependency-groups]
-dev = [
-    "monkeybrain>=0.3.0",
-]
+[tool.touchdesigner.TDPyEnvManagerContext]
+mode = "Python vEnv"
+envName = ".venv"
+installPath = "."
+extraPaths = [ "src", "${UV_PROJECT_ENVIRONMENT}/Lib/site-packages", ".venv/Lib/site-packages",]
 
-
-[tool.monkeybrain]
-projectfile = "TauCeti_PresetSystem.toe"     # Adjust if you rename the base project.
-enforce-version="latest-build" # Options: strict, closest-build, latest-build, latest-version
-touchdesigner-version="2025.00000"
+[tool.setuptools.packages.find]
+where = [ "src",]

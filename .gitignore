@@ -5,3 +5,4 @@ Lib
 *.egg-info*
 TDImportCache
 .vscode
+TDPyEnvManagerContext.yaml
