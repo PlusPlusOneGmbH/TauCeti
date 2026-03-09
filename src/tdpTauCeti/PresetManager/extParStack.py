@@ -4,7 +4,7 @@
 Name : extParStack
 Author : Wieland PlusPlusOne@AMB-ZEPH15
 Saveorigin : TauCeti_PresetSystem.toe
-Saveversion : 2023.12000
+Saveversion : 2025.32280
 Info Header End'''
 
 
@@ -93,7 +93,7 @@ class extParStack:
 	
 	def Add_Par(self, parameter, preload = False, fade_type = ""):
 		for item in self.items:
-			if item.par.Parameter.eval() == parameter or item.par.Operator.eval() is None: 
+			if parameter.isSamePar( item.par.Parameter.eval() ) or item.par.Operator.eval() is None: 
 				item_block = item
 				break
 			continue
