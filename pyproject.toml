@@ -24,14 +24,15 @@ build-backend = "setuptools.build_meta"
 where = ["src"]
 
 [tool.setuptools.package-data]
-"*" = ["*.tox"]
+"*" = [ "*.tox" ]
 
 [dependency-groups]
 dev = [
-    "monkeybrain>=0.2.3",
+    "monkeybrain>=0.3.0",
 ]
 
 
-[tool.touchdesigner]
+[tool.monkeybrain]
 projectfile = "TauCeti_PresetSystem.toe"     # Adjust if you rename the base project.
 enforce-version="latest-build" # Options: strict, closest-build, latest-build, latest-version
+touchdesigner-version="2025.00000"

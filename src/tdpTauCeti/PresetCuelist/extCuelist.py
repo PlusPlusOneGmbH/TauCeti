@@ -6,7 +6,7 @@
 Name : extCuelist
 Author : Wieland PlusPlusOne@AMB-ZEPH15
 Saveorigin : TauCeti_PresetSystem.toe
-Saveversion : 2023.12480
+Saveversion : 2025.32280
 Info Header End'''
 class extCuelist:
 	"""
@@ -43,23 +43,22 @@ class extCuelist:
 
 		nextItem = self.data.GetItem( 
 			min( nextIndex , self.data.NumItems ),
-			rows = "id"
+			rows = "cue_id"
 	    )
 
 		prevItem = self.data.GetItem( 
 			max(1, prevIndex  ),
-			rows = "id"
+			rows = "cue_id"
 		)
-		debug( prevItem )
-		prev_index = float(prevItem["id"]) * bool(prevItem["_tableIndex"] != 1)
-		next_index = float(nextItem["id"]) + 2 * bool(nextItem["_tableIndex"] == self.data.NumItems)
+		prev_index = float(prevItem["cue_id"]) * bool(prevItem["_tableIndex"] != 1)
+		next_index = float(nextItem["cue_id"]) + 2 * bool(nextItem["_tableIndex"] == self.data.NumItems)
 		
 
-		new_id = f"{(next_index + prev_index) / 2:.2f}"
+		new_cue_id = f"{(next_index + prev_index) / 2:.2f}"
 
 		self.data.UpdateItem(sourceIndex, {
 			**self.data.GetItem(sourceIndex),
-			"id" : new_id}
+			"cue_id" : new_cue_id}
 		)
 		self._sort()
 		
@@ -69,37 +68,39 @@ class extCuelist:
 		self.data.SortTable( key = lambda row: float(row[0]))
 		self.Select_Next_Cue()
 
-	def Append_Cue(self, preset, time = 5):
+	def Append_Cue(self, preset, time = None):
 		self.data.AddItem({
 			"id" : math.floor( 
 				float(self.data.GetItem(-1)["id"])
 			) + 1 if self.data.NumItems else "1",
+			"comment" : "",
 			"preset" : preset,
-			"time" : time
+			"time" : self.ownerComp.par.Defaulttime.eval() if time is None else time
 		})
 		self._sort()
 
 
-	def Record_Cue(self, preset, time = 5):
+	def Record_Cue(self, preset, time = None):
 		self.Append_Cue( 
 			self.get_engine().Store_Preset( preset ), 
-			time=time
+			time = self.ownerComp.par.Defaulttime.eval() if time is None else time
 		)
 
-	def Delete_Cue(self, id):
-		self.data.DeleteItem( id )
+	def Delete_Cue(self, cue_id):
+		self.data.DeleteItem( cue_id )
 		self.Select_Next_Cue()
 	
-	def Select_Cue(self, id):
-		self.ownerComp.par.Selectedcue.val = id
+	def Select_Cue(self, cue_id):
+		self.ownerComp.par.Selectedcue.val = cue_id
 		return
 
 	def Select_Next_Cue(self):
 		if not self.data.NumItems: return
-		nextCueIndex = self.ownerComp.par.Activecue.menuIndex + 1
-		if self.loop: nextCueIndex %= len( self.ownerComp.par.Selectedcue.menuNames )
+		next_cue_index = self.ownerComp.par.Activecue.menuIndex + 1
+		if self.loop: next_cue_index %= len( self.ownerComp.par.Selectedcue.menuNames )
+		else: next_cue_index = tdu.clamp( next_cue_index, 0, len( self.ownerComp.par.Selectedcue.menuNames )-1)
 		self.Select_Cue( 
-			self.ownerComp.par.Selectedcue.menuNames[ nextCueIndex ]
+			self.ownerComp.par.Selectedcue.menuNames[ next_cue_index ]
 		)
 	
 
@@ -120,40 +121,44 @@ class extCuelist:
 			cueData["time"]
 		)
 	
-		eventId = self.ownerComp.op("event1").createEvent(
+		eventcue_id = self.ownerComp.op("event1").createEvent(
 			attackTime = cueData["time"]
 		)
 		self.ownerComp.op("recalled_cues").appendRow(
-			[eventId, cue_id]
+			[eventcue_id, cue_id]
 		)
 
-	def _finalize_cue(self, eventId):
-		cueId = self.ownerComp.op("recalled_cues")[eventId, "cueId"].val
-		cueData = self.data.GetItem(cueId)
-		presetId = cueData["preset"]
-		presetName = self.get_engine().Get_Preset_Name(presetId)
+	def _finalize_cue(self, event_id):
+		cue_id = self.ownerComp.op("recalled_cues")[str(event_id), "cueId"].val
+		cueData = self.data.GetItem(cue_id)
+		presetcue_id = cueData["preset"]
+		presetName = self.get_engine().Get_Preset_Name(presetcue_id)
 
 		self.ownerComp.op("callbackManager").Do_Callback(
 			"onDone",
-			cueId,
-			presetId,
+			cue_id,
+			presetcue_id,
 			presetName
 		)
+		self.ownerComp.op("recalled_cues").deleteRow( str( event_id) )
 
-	def Update_Cue(self, id, dataset:dict):
-		self.data.UpdateItem(id, {
-			**self.data.GetItem(id),
-			**dataset}
+	def Update_Cue(self, cue_id, dataset:dict):
+		self.data.UpdateItem(cue_id, {
+			**self.data.GetItem(cue_id),
+			**dataset }
 		)
 
-	def Assign_Preset(self, id, preset):
-		self.Update_Cue(id, {"preset" : preset})
+	def Assign_Preset(self, cue_id, preset):
+		self.Update_Cue(cue_id, {"preset" : preset})
 
-	def Assign_Time(self, id, time):
-		self.Update_Cue(id, {"time" : time})
+	def Assign_Time(self, cue_id, time):
+		self.Update_Cue(cue_id, {"time" : time})
 
-	def Assign_Id(self, id, newId):
-		self.Update_Cue(id, {"id" : newId})
+	def Assign_Comment(self, cue_id, comment):
+		self.Update_Cue(cue_id, {"comment" : comment })
+
+	def Assign_cue_id(self, cue_id, newcue_id):
+		self.Update_Cue(cue_id, {"cue_id" : newcue_id})
 		self.data.SortTable( key = lambda row: float(row[0]))
 		self.Select_Next_Cue()
 
