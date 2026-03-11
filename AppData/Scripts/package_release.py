@@ -14,7 +14,7 @@ call(f'git commit . -m "Bump to Version {version}"')
 # Now lets prepare everything for a clean buildprocess.
 # In the future all of this will run outside ;)
 
-call(f'git checkout -b main')
+call(f'git checkout main')
 call(f"git merge dev")
 
 search_tag = "package_release_candidate"
