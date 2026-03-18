@@ -33,32 +33,30 @@ class extCuelist:
 
 
 
-	def Reorder(self, sourceIndex, targetIndex):
-		if sourceIndex > targetIndex:
-			nextIndex = targetIndex
-			prevIndex = targetIndex - 1
-		else :
-			nextIndex = targetIndex + 1
-			prevIndex = targetIndex
+	def Reorder(self, source_row_index:int, target_slot_index:int):
 
-		nextItem = self.data.GetItem( 
-			min( nextIndex , self.data.NumItems ),
-			rows = "cue_id"
+		next_row_index = target_slot_index + 1
+		prev_row_index = target_slot_index 
+
+		next_item_data = self.data.GetItem( 
+			min( next_row_index , self.data.NumItems ),
+			rows = "id"
 	    )
 
-		prevItem = self.data.GetItem( 
-			max(1, prevIndex  ),
-			rows = "cue_id"
+		prev_item_data = self.data.GetItem( 
+			max(1, prev_row_index  ),
+			rows = "id"
 		)
-		prev_index = float(prevItem["cue_id"]) * bool(prevItem["_tableIndex"] != 1)
-		next_index = float(nextItem["cue_id"]) + 2 * bool(nextItem["_tableIndex"] == self.data.NumItems)
-		
 
-		new_cue_id = f"{(next_index + prev_index) / 2:.2f}"
+		prev_id = float(prev_item_data["id"]) * bool( target_slot_index == 1) # bool(prev_item_data["_tableIndex"] != 1)
+		next_id = float(next_item_data["id"]) + 2 * bool(next_item_data["_tableIndex"] == self.data.NumItems)
+		debug( next_item_data, prev_item_data, prev_id, next_id)
 
-		self.data.UpdateItem(sourceIndex, {
-			**self.data.GetItem(sourceIndex),
-			"cue_id" : new_cue_id}
+		new_cue_id = f"{(next_id + prev_id) / 2:.2f}"
+
+		self.data.UpdateItem(source_row_index, {
+			**self.data.GetItem(source_row_index),
+			"id" : new_cue_id}
 		)
 		self._sort()
 		
