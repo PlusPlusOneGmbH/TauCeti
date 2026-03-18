@@ -24,17 +24,17 @@ Repository = "https://github.com/PlusPlusOneGmbH/TD_TauCeti_Presetsystem"
 
 [tool.monkeybrain]
 projectfile = "TauCeti_PresetSystem.toe"
-enforce-version = "latest-build"
+enforce-version = "strict" # "latest-build"
 touchdesigner-version = "2025.32280"
-
-[tool.setuptools.package-data]
-"*" = [ "*.tox",]
 
 [tool.touchdesigner.TDPyEnvManagerContext]
 mode = "Python vEnv"
 envName = ".venv"
 installPath = "."
-extraPaths = [ "src", "${UV_PROJECT_ENVIRONMENT}/Lib/site-packages", ".venv/Lib/site-packages",]
+extraPaths = [ "src" ]
+
+[tool.setuptools.package-data]
+"*" = [ "*.tox",]
 
 [tool.setuptools.packages.find]
 where = [ "src",]
