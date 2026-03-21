@@ -31,10 +31,16 @@ touchdesigner-version = "2025.32280"
 "*" = [ "*.tox",]
 
 [tool.touchdesigner.TDPyEnvManagerContext]
+contextVersion = 2
+createdByVersion = "1.4.0"
+active = true
 mode = "Python vEnv"
 envName = ".venv"
 installPath = "."
-extraPaths = [ "src", "${UV_PROJECT_ENVIRONMENT}/Lib/site-packages", ".venv/Lib/site-packages",]
-
+pythonVersion = "3.11"
+autoSetup = false
+autoSetupReqs = []
+autoSetupSyncReqs = false
+extraPaths = ["src", "${UV_PROJECT_ENVIRONMENT}/Lib/site-packages", ".venv/Lib/site-packages"]
 [tool.setuptools.packages.find]
 where = [ "src",]
