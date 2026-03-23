@@ -1,12 +1,8 @@
-
-
-
-
 '''Info Header Start
 Name : extCuelist
 Author : Wieland PlusPlusOne@AMB-ZEPH15
 Saveorigin : TauCeti_PresetSystem.toe
-Saveversion : 2025.32280
+Saveversion : 2025.32460
 Info Header End'''
 class extCuelist:
 	"""
@@ -33,44 +29,41 @@ class extCuelist:
 
 
 
-	def Reorder(self, source_row_index:int, target_slot_index:int):
-
+	def Reorder(self, source_row_index, target_slot_index):
 		if source_row_index > target_slot_index:
-			next_row_index = target_slot_index 
-			prev_row_index = target_slot_index - 1
-		else:
-			next_row_index = target_slot_index + 1
-			prev_row_index = target_slot_index 
+			nextIndex = target_slot_index
+			prevIndex = target_slot_index - 1
+		else :
+			nextIndex = target_slot_index + 1
+			prevIndex = target_slot_index
 
-		
 		next_item_data = self.data.GetItem( 
-			tdu.clamp( next_row_index , 1, self.data.NumItems ),
+			tdu.clamp( nextIndex ,1, self.data.NumItems ),
 			rows = "id"
 	    )
 
 		prev_item_data = self.data.GetItem( 
-			tdu.clamp( prev_row_index , 1, self.data.NumItems ),
+			tdu.clamp( prevIndex ,1, self.data.NumItems ),
 			rows = "id"
 		)
 
+
 		if prev_item_data["_tableIndex"] == 1 and next_item_data["_tableIndex"] == 1:
-			prev_id = 0
-			next_id = float(next_item_data["id"])
-		elif prev_item_data["_tableIndex"] == self.data.NumItems and prev_item_data["_tableIndex"] == self.data.NumItems:
-			prev_id = float(prev_item_data["id"]) 
-			next_id = float(next_item_data["id"]) + 2
+			prev_index = 0
+			next_index = float(next_item_data["id"])
+		elif prev_item_data["_tableIndex"] == self.data.NumItems and next_item_data["_tableIndex"] == self.data.NumItems:
+			prev_index = float(prev_item_data["id"])
+			next_index = float(next_item_data["id"]) + 2
 		else:
-			prev_id = float(prev_item_data["id"]) 
-			next_id = float(next_item_data["id"])
+			prev_index = float(prev_item_data["id"])
+			next_index = float(next_item_data["id"])
 
-
-		new_cue_id = f"{(next_id + prev_id) / 2:.2f}"
+		new_cue_id = f"{(next_index + prev_index) / 2:.2f}"
 
 		self.data.UpdateItem(source_row_index, {
 			**self.data.GetItem(source_row_index),
 			"id" : new_cue_id}
 		)
-		
 		self.Sort()
 		
 		return 
@@ -80,12 +73,12 @@ class extCuelist:
 		self.Select_Next_Cue()
 
 	def Append_Cue(self, preset, time = None):
-		new_iw = math.floor( 
+		new_id =  math.floor( 
 				float(self.data.GetItem(-1)["id"])
 			) + 1 if self.data.NumItems else 1.0
 		
 		self.data.AddItem({
-			"id" : f"{new_iw:.2f}",
+			"id" :f"{new_id:.2f}",
 			"comment" : "",
 			"preset" : preset,
 			"time" : self.ownerComp.par.Defaulttime.eval() if time is None else time
@@ -172,9 +165,7 @@ class extCuelist:
 
 	def Assign_cue_id(self, cue_id, newcue_id):
 		self.Update_Cue(cue_id, {"id" : newcue_id})
-		#self.data.SortTable( key = lambda row: float(row[0]))
 		self.Sort()
-		self.Select_Next_Cue()
 
 	def Go(self):
 		self.Recall_Cue(self.selected_cue)

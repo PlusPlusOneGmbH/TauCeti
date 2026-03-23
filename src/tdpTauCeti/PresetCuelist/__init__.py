@@ -6,16 +6,15 @@ Saveversion : 2025.32460
 Info Header End'''
 
 from pathlib import Path
-ToxFile = Path( Path(  __file__ ).parent, "PresetManager.tox" )
-DefaultGlobalOpShortcut = "TAUCETI_PRESETMANAGER"
+ToxFile = Path( Path(  __file__ ).parent, "PresetCuelist.tox" )
+DefaultGlobalOpShortcut = "TAUCETI_PRESETCUELIST"
 
 
 from typing import TYPE_CHECKING, Union
 if TYPE_CHECKING:
-    from .extParStack import extParStack
-    from .extTauCetiManager import extTauCetiManager
+    from .extCuelist import extCuelist
     Typing = Union[
-        extParStack, extTauCetiManager
+        extCuelist
     ]
 else:
     Typing = None
