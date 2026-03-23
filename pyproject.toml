@@ -5,7 +5,7 @@ description = "Presetmanagement and parameer manipulation in TouchDesigner."
 readme = "README.md"
 license-files = [ "LICENSE",]
 requires-python = ">=3.11"
-keywords = [ "TouchDesigner", "Parameter", "Tweener", "2023.12000",]
+keywords = [ "TouchDesigner", "Parameter", "Tweener", "2025.32460",]
 dependencies = []
 [[project.authors]]
 name = "Wieland Hilker"
@@ -27,9 +27,6 @@ projectfile = "TauCeti_PresetSystem.toe"
 enforce-version = "latest-build"
 touchdesigner-version = "2025.32280"
 
-[tool.setuptools.package-data]
-"*" = [ "*.tox",]
-
 [tool.touchdesigner.TDPyEnvManagerContext]
 contextVersion = 2
 createdByVersion = "1.4.0"
@@ -41,6 +38,10 @@ pythonVersion = "3.11"
 autoSetup = false
 autoSetupReqs = []
 autoSetupSyncReqs = false
-extraPaths = ["src", "${UV_PROJECT_ENVIRONMENT}/Lib/site-packages", ".venv/Lib/site-packages"]
+extraPaths = ["src"]
+
+[tool.setuptools.package-data]
+"*" = [ "*.tox",]
+
 [tool.setuptools.packages.find]
 where = [ "src",]
