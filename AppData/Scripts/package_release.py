@@ -8,36 +8,32 @@ with open("pyproject.toml", "rb") as projecttoml:
     projectdata = tomllib.load( projecttoml )
     version = projectdata["project"]["version"]
 
-call("git add .")
-call(f'git commit . -m "Bump to Version {version}"')
-
-# Now lets prepare everything for a clean buildprocess.
-# In the future all of this will run outside ;)
-
-call(f'git checkout main')
-call(f"git merge dev")
-
-search_tag = "package_release_candidate"
+search_tag = "tauceti_package_release_candidate"
 release_candidates = parent.Project.findChildren( tags = [search_tag] )
 
-for target in release_candidates:
-    target.tags.remove(search_tag)
-    op("PrivateInvestigator").Release( target )
 
 for target in release_candidates:
-    for child in list( target.findChildren( tags = [op("PrivateInvestigator").par.Tag.eval()] ) ) + [target]:
-        debug(f"Removing tag from {child}")
-        child.tags.remove( op("PrivateInvestigator").par.Tag.eval() )
+    # We actually do not do this. We just do some cleanup like running pr-release and removing docked comps.
+
+    #for child in list( target.findChildren( tags = [op("PrivateInvestigator").par.Tag.eval()] ) ) + [target]:
+    #    debug(f"Removing tag from {child}")
+    #    child.tags.remove( op("PrivateInvestigator").par.Tag.eval() )
     
-    prereleasescript = target.op("pre_release")
-    if prereleasescript is not None: prereleasescript.run()
-    op("PrivateInvestigator").Save( target )
+    for docked_comp in target.docked:
+        docked_comp.dock = None
 
+    prereleasescript = target.op("pre_release")
+    debug("Preparing", target)
+    if prereleasescript is not None: 
+        debug("Running prerleasescript.")
+        prereleasescript.run()
+    op("PrivateInvestigator").Save( target )
+    debug("Saved", target)
+    op("PrivateInvestigator").Release( target )
+    debug("Release", target)
 
 call("git add .")
-call(f'git commit -m "TauCeti Release v{version}"')
-call(f'git tag -a v{version} -m "Release v{version}"')
-
+call(f'git commit . -m "Version {version}"')
 
 
 

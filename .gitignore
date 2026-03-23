@@ -6,3 +6,5 @@ Lib
 TDImportCache
 .vscode
 TDPyEnvManagerContext.yaml
+*.gz
+*.whl
