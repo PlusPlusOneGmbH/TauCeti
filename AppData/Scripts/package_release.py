@@ -35,7 +35,7 @@ for target in release_candidates:
 
 
 call("git add .")
-call(f'git commit -i . -m "TauCeti Release v{version}"')
+call(f'git commit -m "TauCeti Release v{version}"')
 call(f'git tag -a v{version} -m "Release v{version}"')
 
 
