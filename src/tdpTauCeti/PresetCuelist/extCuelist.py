@@ -1,7 +1,3 @@
-
-
-
-
 '''Info Header Start
 Name : extCuelist
 Author : Wieland PlusPlusOne@AMB-ZEPH15

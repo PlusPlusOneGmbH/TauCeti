@@ -4,7 +4,7 @@
 Name : extTauCetiManager
 Author : Wieland PlusPlusOne@AMB-ZEPH15
 Saveorigin : TauCeti_PresetSystem.toe
-Saveversion : 2023.12480
+Saveversion : 2025.32460
 Info Header End'''
 
 TDFunctions = op.TDModules.mod.TDFunctions
