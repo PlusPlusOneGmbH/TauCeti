@@ -13,9 +13,8 @@ DefaultGlobalOpShortcut = "TAUCETI_PRESETCUELIST"
 from typing import TYPE_CHECKING, Union
 if TYPE_CHECKING:
     from .extCuelist import extCuelist
-    Typing = Union[
-        extCuelist
-    ]
+    class Typing(baseCOMP, extCuelist):
+        pass
 else:
     Typing = None
 

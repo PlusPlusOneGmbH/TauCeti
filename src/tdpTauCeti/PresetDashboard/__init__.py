@@ -14,9 +14,8 @@ from typing import TYPE_CHECKING, Union
 if TYPE_CHECKING:
 
     from .extDashboard import extDashboard
-    Typing = Union[
-        extDashboard
-    ]
+    class Typing( containerCOMP, extDashboard):
+        pass
 else:
     Typing = None
 
