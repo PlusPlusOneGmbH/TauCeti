@@ -18,7 +18,7 @@ from td import *
 from copy import copy
 
 if TYPE_CHECKING:   
-    from TauCeti.Tweener.extTweener import extTweener
+    from tdpTauCeti.Tweener.extTweener import extTweener
 else:
     extTweener = Any
 
@@ -69,7 +69,7 @@ class extTauCetiManager:
 		# self.stack     		= self.ownerComp.ext.extParStack # ????
 		# self.tweener   		= self.ownerComp.op('olib_dependancy').Get_Component()
 		try:
-			from TauCeti.Tweener import ToxFile as TweenerToxFile
+			from tdpTauCeti.Tweener import ToxFile as TweenerToxFile
 			self.tweener:extTweener	= ensure_external(TweenerToxFile, "TAUCETI_TWEENER")
 		except ModuleNotFoundError:
 			self.tweener:extTweener = self.ownerComp.op("remote_dependency").GetGlobalComponent()
