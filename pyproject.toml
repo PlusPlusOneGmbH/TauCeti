@@ -1,6 +1,6 @@
 [project]
 name = "tdp-TauCeti"
-version = "5.1.6"
+version = "5.1.7"
 description = "Presetmanagement and parameer manipulation in TouchDesigner."
 readme = "README.md"
 license-files = [ "LICENSE",]
