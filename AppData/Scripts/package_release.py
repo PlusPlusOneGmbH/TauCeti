@@ -28,7 +28,7 @@ for target in release_candidates:
 
 
 for target in release_candidates:
-    target.tags.remove(search_tag)
+    # target.tags.remove(search_tag)
     op("PrivateInvestigator").Release( target )
 
 call("git add .")
