@@ -8,7 +8,7 @@ with open("pyproject.toml", "rb") as projecttoml:
     projectdata = tomllib.load( projecttoml )
     version = projectdata["project"]["version"]
 
-search_tag = "package_release_candidate"
+search_tag = "tauceti_package_release_candidate"
 release_candidates = parent.Project.findChildren( tags = [search_tag] )
 
 
@@ -23,13 +23,14 @@ for target in release_candidates:
         docked_comp.dock = None
 
     prereleasescript = target.op("pre_release")
-    if prereleasescript is not None: prereleasescript.run()
+    debug("Preparing", target)
+    if prereleasescript is not None: 
+        debug("Running prerleasescript.")
+        prereleasescript.run()
     op("PrivateInvestigator").Save( target )
-
-
-for target in release_candidates:
-    # target.tags.remove(search_tag)
+    debug("Saved", target)
     op("PrivateInvestigator").Release( target )
+    debug("Release", target)
 
 call("git add .")
 call(f'git commit . -m "Version {version}"')

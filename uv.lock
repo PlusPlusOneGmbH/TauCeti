@@ -46,7 +46,7 @@ wheels = [
 
 [[package]]
 name = "tdp-tauceti"
-version = "5.1.9"
+version = "5.1.10"
 source = { editable = "." }
 
 [package.dev-dependencies]
