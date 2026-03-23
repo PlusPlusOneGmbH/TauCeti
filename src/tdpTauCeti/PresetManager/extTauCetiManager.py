@@ -7,20 +7,21 @@ Saveorigin : TauCeti_PresetSystem.toe
 Saveversion : 2025.32460
 Info Header End'''
 
-TDFunctions = op.TDModules.mod.TDFunctions
-import uuid
-from .extParStack import InvalidOperator
-from typing import Literal, Union
-
-from typing import  TYPE_CHECKING, Any
 from td import *
 
-from copy import copy
+TDFunctions = op.TDModules.mod.TDFunctions
+
+import uuid
+from typing import Literal, Union
+
+from typing import  TYPE_CHECKING, Any, cast
 
 if TYPE_CHECKING:   
-    from tdpTauCeti.Tweener.extTweener import extTweener
+	from tdpTauCeti.Tweener.extTweener import extTweener
+	from tdpTauCeti.Tweener.TweenObject import _tween
 else:
-    extTweener = Any
+	extTweener = Any
+	_tween = Any
 
 def snakeCaseToCamelcase( classObject ):
 	import inspect
@@ -36,7 +37,7 @@ def snakeCaseToCamelcase( classObject ):
 # This also is a testbench and will be implemented in a third party package.
 from os import environ
 from pathlib import Path
-def ensure_external(filepath, opshortcut, root_comp = root):
+def ensure_external(filepath, opshortcut, root_comp:COMP = root):
 
 	if (_potentialy:= getattr(op, opshortcut, None)) is not None:
 		return _potentialy
@@ -61,6 +62,53 @@ def ensure_external(filepath, opshortcut, root_comp = root):
 class PresetDoesNotExist(Exception):
 	pass
 
+from asyncio import gather
+from dataclasses import dataclass
+
+@dataclass
+class PresetRecall:
+	name : str
+	preset_id : str
+	tweens : List[_tween]
+	invalid:bool = False
+
+	def __bool__(self):
+		return not self.invalid
+
+	@property
+	def pars(self):
+		return [ tween.parameter for tween in self.tweens ]
+	
+	@property
+	def remaining(self):
+		return max(
+			[ tween.Remaining for tween in self.tweens]
+		)
+
+	@property
+	def done(self):
+		return all(
+			[ tween.Done for tween in self.tweens ]
+		)
+	
+	def pause(self):
+		for tween in self.tweens:
+			tween.Pause()
+
+	def resume(self):
+		for tween in self.tweens:
+			tween.Resume()
+
+	def stop(self):
+		for tween in self.tweens:
+			tween.Stop()
+
+	async def Resolve(self):
+		return await gather(*[
+			tween.Resolve() for tween in self.tweens
+		])
+	
+
 class extTauCetiManager:
 
 	def __init__(self, ownerComp):
@@ -70,7 +118,7 @@ class extTauCetiManager:
 		# self.tweener   		= self.ownerComp.op('olib_dependancy').Get_Component()
 		try:
 			from tdpTauCeti.Tweener import ToxFile as TweenerToxFile
-			self.tweener:extTweener	= ensure_external(TweenerToxFile, "TAUCETI_TWEENER")
+			self.tweener	= cast(extTweener, ensure_external(TweenerToxFile, "TAUCETI_TWEENER"))
 		except ModuleNotFoundError:
 			self.tweener:extTweener = self.ownerComp.op("remote_dependency").GetGlobalComponent()
 			# We will use this as a fallback still for folks not using state of the art packagaging technology
@@ -141,7 +189,7 @@ class extTauCetiManager:
 			Return the TOP showing the preview of the Presets.
 		"""
 
-		return self.Get_Preset_Comp(preset_id).op("preview")
+		return self.Get_Preset_Comp(preset_id).opex("preview").asType(TOP)
 
 	def Store_Preset(self, name:str, tag = '',preset_id = "") -> str:
 		"""
@@ -150,10 +198,10 @@ class extTauCetiManager:
 		"""
 		#creating newpreset_id if nopreset_id given.
 		if self.ownerComp.par.Idmode.eval() == "Name":
-			name = tdu.legalName( name )
+			name = tdu.legalName( name ) # pyright: ignore[reportAttributeAccessIssue]
 			preset_id = name
 		
-		preset_id =preset_id or tdu.legalName( str( uuid.uuid4() ) )
+		preset_id =preset_id or tdu.legalName( str( uuid.uuid4() ) ) # pyright: ignore[reportAttributeAccessIssue]
 
 		#checking for existing preset
 		existing_preset_comp 	= self.preset_folder.op( preset_id ) 
@@ -253,13 +301,14 @@ class extTauCetiManager:
 				continue
 
 	def Recall_Preset(self,preset_id:str, time:float, curve = "s", load_stack = False):
+		
 		preset_comp = self.preset_folder.op(preset_id )
 		self.logger.Log("Recalling preset", preset_id, time, curve, load_stack)
 		
 		if not preset_comp: 
 			if self.ownerComp.par.Handlenopreset.eval() == "Raise Exception": 
 				raise self.PresetDoesNotExist()
-			return False
+			return PresetRecall( "_invalid", preset_id, [], invalid = True)
 		
 		self.ownerComp.op("callbackManager").Do_Callback(
 			"onPresetRecall", 
@@ -271,7 +320,7 @@ class extTauCetiManager:
 
 		if load_stack: self.Preset_To_Stack( preset_id )
 
-
+		tweens = []
 		for block in preset_comp.seq.Items:
 			
 			
@@ -292,22 +341,31 @@ class extTauCetiManager:
 				)
 				continue
 
-			self.tweener.CreateTween(	target_parameter, 
-										block.par.Value.eval(), 
-										time, 
-										type 	= block.par.Type.eval(), 
-										curve 	= curve, 
-										id 		= preset_comp, 
-										mode 	= block.par.Mode.eval(), 
-										expression = block.par.Expression.eval() )
-		return True
+			tweens.append(
+				self.tweener.CreateTween(
+					target_parameter, 
+					block.par.Value.eval(), 
+					time, 
+					type 	= block.par.Type.eval(), 
+					curve 	= curve, 
+					id 		= preset_comp, 
+					mode 	= block.par.Mode.eval(), 
+					expression = block.par.Expression.eval() 
+				)
+			)
+
+		return PresetRecall(
+			preset_comp.par.Name.eval(), 
+			preset_id, 
+			tweens
+		)
 	
 	def Rename(self,preset_id:str, new_name:str ):
 		preset_comp = self.preset_folder.op(preset_id )
 		if not preset_comp: return
 		
 		if self.ownerComp.par.Renamemode.eval() == "Replacepreset_id":
-			new_name = tdu.legalName( new_name )
+			new_name = tdu.legalName( new_name ) # pyright: ignore[reportAttributeAccessIssue]
 			preset_comp.name 			= new_name
 			preset_comp.par.Name.val 	= new_name
 		else:
