@@ -7,13 +7,9 @@ Saveorigin : TauCeti_PresetSystem.toe
 Saveversion : 2025.32460
 Info Header End'''
 
-from td import *
+from td import * # pyright: ignore[reportMissingImports]
 
-TDFunctions = op.TDModules.mod.TDFunctions
-
-import uuid
 from typing import Literal, Union
-
 from typing import  TYPE_CHECKING, Any, cast
 
 if TYPE_CHECKING:   
@@ -35,8 +31,7 @@ def snakeCaseToCamelcase( classObject ):
 			)
 
 # This also is a testbench and will be implemented in a third party package.
-from os import environ
-from pathlib import Path
+
 def ensure_external(filepath, opshortcut, root_comp:COMP = root):
 
 	if (_potentialy:= getattr(op, opshortcut, None)) is not None:
@@ -44,7 +39,7 @@ def ensure_external(filepath, opshortcut, root_comp:COMP = root):
 
 	current_comp = root_comp
 	for path_element in environ.get("ENSURE_UTILITY_PATH", "utils").strip("/ ").split("/"):
-		current_comp = current_comp.op( path_element ) or current_comp.create( baseCOMP, path_element)
+		current_comp = current_comp.opex( path_element ).asType(COMP) or current_comp.create( baseCOMP, path_element)
 
 	newly_loaded 							= current_comp.loadTox(filepath)
 	newly_loaded.name 						= opshortcut
@@ -64,6 +59,8 @@ class PresetDoesNotExist(Exception):
 
 from asyncio import gather
 from dataclasses import dataclass
+
+
 
 @dataclass
 class PresetRecall:
@@ -109,6 +106,14 @@ class PresetRecall:
 		])
 	
 
+TDFunctions = op.TDModules.mod.TDFunctions # pyright: ignore[reportAttributeAccessIssue]
+
+import uuid
+from copy import copy
+from os import environ
+from pathlib import Path
+
+
 class extTauCetiManager:
 
 	def __init__(self, ownerComp):
@@ -132,7 +137,7 @@ class extTauCetiManager:
 		snakeCaseToCamelcase( self )
 
 	@property
-	def stack(self):
+	def _stack(self):
 		return self.ownerComp
 
 	@property
@@ -164,7 +169,7 @@ class extTauCetiManager:
 		self.preset_folder.par.reinitnet.pulse()
 		self.preset_folder.par.externaltox = ""
 
-	def store_prev(self, prefab):
+	def _store_prev(self, prefab):
 		prefab.op("preview").par.top = self.ownerComp.op("preview")			
 		prefab.op("preview").bypass = False
 		prefab.op("preview").lock = False
@@ -227,13 +232,13 @@ class extTauCetiManager:
 		preset_comp = self._create_preset( name, tag, preset_id )
 
 		#storing the preview
-		self.store_prev( preset_comp )
+		self._store_prev( preset_comp )
 		
 		#aranging the node
 		TDFunctions.arrangeNode( preset_comp )
 
 		#writing stack to preset-table
-		stack_data =  self.ownerComp.op("callbackManager").Do_Callback("getStack", self.ownerComp) or  self.stack.Get_Stack_Dict_List() 
+		stack_data =  self.ownerComp.op("callbackManager").Do_Callback("getStack", self.ownerComp) or  self._stack.Get_Stack_Dict_List() 
 
 		preset_comp.seq.Items.numBlocks = len( stack_data )
 		data_seq = preset_comp.seq.Items
@@ -287,11 +292,11 @@ class extTauCetiManager:
 	def Preset_To_Stack(self,preset_id:str):	
 		preset_comp = self.preset_folder.op(preset_id )
 		if not preset_comp: return
-		self.stack.Clear_Stack()
+		self._stack.Clear_Stack()
 
 		for block in preset_comp.seq.Items:
 			try:
-				self.stack.Add_Par( 
+				self._stack.Add_Par( 
 					block.par.Parameter.eval(),
 					preload = block.par.Preload.eval(),
 					fade_type = block.par.Type.eval()
@@ -381,7 +386,7 @@ class extTauCetiManager:
 			When using "overwrite" mode all parameters will b overwritten. CAUTION!
 		"""
 
-		stack_data =  self.ownerComp.op("callbackManager").Do_Callback("getStack", self.ownerComp) or  self.stack.Get_Stack_Dict_List() 
+		stack_data =  self.ownerComp.op("callbackManager").Do_Callback("getStack", self.ownerComp) or  self._stack.Get_Stack_Dict_List() 
 		for preset_comp in self.preset_comps:
 
 			preset_data_seq = preset_comp.seq.Items
@@ -412,9 +417,16 @@ class extTauCetiManager:
 				else:
 					append_data.append( stack_item )
 			
-			for new_value_item in append_data:
+
+			for _new_value_item in append_data:
+				new_value_item = copy( _new_value_item )
 				new_block = preset_comp.seq.Items.insertBlock(0)
-				new_value_item["Operator"] = self.ownerComp.relativePath( new_value_item["Operator"] ) if self.ownerComp.par.Pathrelation.eval() == "Relative" else new_value_item["Operator"].path
+				if self.ownerComp.par.Pathrelation.eval() == "Relative":
+					pass
+					new_value_item["Operator"] = self.ownerComp.relativePath( new_value_item["Operator"] )
+				else:
+					pass
+					new_value_item["Operator"] = new_value_item["Operator"].path
 				for key, value in new_value_item.items():
 					setattr( new_block.par, key, value)
 				
@@ -425,5 +437,5 @@ class extTauCetiManager:
 	@property
 	def PresetParMenuObject(self):
 		return tdu.TableMenu(
-			self.ownerComp.op("id_to_name"), labelCol = "name"
+			self.ownerComp.opex("id_to_name").asType(tableDAT), labelCol = "name"
 		)
