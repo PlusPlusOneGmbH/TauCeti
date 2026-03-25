@@ -1,6 +1,6 @@
 [project]
 name = "tdp-TauCeti"
-version = "5.1.11"
+version = "5.1.12"
 description = "Presetmanagement and parameer manipulation in TouchDesigner."
 readme = "README.md"
 license-files = [ "LICENSE",]
@@ -16,7 +16,7 @@ requires = [ "setuptools>=61.0",]
 build-backend = "setuptools.build_meta"
 
 [dependency-groups]
-dev = [ "monkeybrain>=0.3.0",]
+dev = [ "monkeybrain>=0.3.0", "tdp-touchutilcollection>=0.7.3",]
 
 [project.urls]
 Website = "https://plusplus.one"
@@ -39,7 +39,6 @@ autoSetup = false
 autoSetupReqs = []
 autoSetupSyncReqs = false
 extraPaths = ["src"]
-
 [tool.setuptools.package-data]
 "*" = [ "*.tox",]
 

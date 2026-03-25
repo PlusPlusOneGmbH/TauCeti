@@ -6,14 +6,13 @@ Saveversion : 2025.32460
 Info Header End'''
 
 from pathlib import Path
-ToxFile = Path( Path(  __file__ ).parent, "PresetCuelist.tox" )
-DefaultGlobalOpShortcut = "TAUCETI_PRESETCUELIST"
+ToxFile = Path( Path(  __file__ ).parent, "extPresetMapper.py.tox" )
+DefaultGlobalOpShortcut = "TAUCETI_PRESETMAPPER"
 
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from .extCuelist import extCuelist
-    class Typing(baseCOMP, extCuelist):
+    class Typing(baseCOMP):
         pass
 else:
     Typing = None

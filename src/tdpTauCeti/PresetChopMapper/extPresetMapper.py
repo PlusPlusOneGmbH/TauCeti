@@ -2,7 +2,7 @@
 Name : extPresetMapper
 Author : Wieland PlusPlusOne@AMB-ZEPH15
 Saveorigin : TauCeti_PresetSystem.toe
-Saveversion : 2023.12000
+Saveversion : 2025.32460
 Info Header End'''
 class extPresetMapper:
 	"""
@@ -57,3 +57,8 @@ class extPresetMapper:
 
 		self.Do_Map( name, time )
 		return
+	
+	def Ensure_Row(self, index):
+		if self.maps[index, "name"] is None:
+			self.maps.appendRows([["",""]  * (index - self.maps.numRows + 1)] )
+		return self.maps

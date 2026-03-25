@@ -46,18 +46,31 @@ wheels = [
 
 [[package]]
 name = "tdp-tauceti"
-version = "5.1.11"
+version = "5.1.12"
 source = { editable = "." }
 
 [package.dev-dependencies]
 dev = [
     { name = "monkeybrain" },
+    { name = "tdp-touchutilcollection" },
 ]
 
 [package.metadata]
 
 [package.metadata.requires-dev]
-dev = [{ name = "monkeybrain", specifier = ">=0.3.0" }]
+dev = [
+    { name = "monkeybrain", specifier = ">=0.3.0" },
+    { name = "tdp-touchutilcollection", specifier = ">=0.7.3" },
+]
+
+[[package]]
+name = "tdp-touchutilcollection"
+version = "0.7.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/00/3d/526aca5e38c61e3a2c956bf17a37b8d3cc7b053168e6994680e27bff5805/tdp_touchutilcollection-0.7.3.tar.gz", hash = "sha256:be7340e0eaa73f5d9e79a992c7eb552c3e007afff1729647dcf3c0cd36f58196", size = 12690, upload-time = "2026-03-13T10:14:14.588Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/99/af/d7183bc745ecbee79868e7843c7c455b67adde982fa52e723594c466c47d/tdp_touchutilcollection-0.7.3-py3-none-any.whl", hash = "sha256:d489ad463b34def75fa2f3c6bc0a04d0e4e0ca27aba613b9651cbd01646866f4", size = 17249, upload-time = "2026-03-13T10:14:13.365Z" },
+]
 
 [[package]]
 name = "toml"
