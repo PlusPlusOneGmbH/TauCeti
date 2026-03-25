@@ -32,6 +32,7 @@ This project is released under the GPL-3.0 license and part of PlusPlusOne FOSS 
 Feel free to open pull requests or open issues.
 
 ## Tweener
+```mod.tdpTauCeti.Tweener```
 The tweener is the heart of the whole system and a great component in itself. It allows for programmatic creation and management of Tweens, transitions between states of a parameter. Be it Expression or Static, fadeable and non-fadeable parameters, the Tweener should be able to handle them.
 
 __ There should only be one tweener per project. Use GlobalOP-Shortcuts or other means of dependency management __
@@ -136,6 +137,7 @@ tweenObject = op("Tweener").AbsoluteTween( op("level1").par.opacity, 1, 1)
 tweenObject.OnDoneCallbacks.append( callback )
 ```
 ## PresetManager
+```mod.tdpTauCeti.PresetManager```
 The presetmanager allows to store and recall state of any arbitrary parameters.
 
 Most operations will use the stack, which is a collection of parameters. To add any parameter to the stack, activate the viewer and add drop the parameter right in.
@@ -174,7 +176,8 @@ Store_Preset( name:str, tag = '',preset_id = "") -> str:
 Recall_Preset( preset_id:str, time:float, curve = "s", load_stack = False):
 # Recalls the preset in the given time. 
 # Load Stack will recall the parameters and settings of the preset and store them in to the stack.
-
+# Returns a "Recall" object which can used to control continuation via pause(), stop() or resume() 
+# # and grants awaitability via a .Resolve() member
 
 Push_Stack_To_Presets( preset_id:str)
 # Saves all values of parameters currently on the stack
@@ -186,3 +189,11 @@ Rename( preset_id:str, new_name:str)
 
 To be added:
 - Parameter
+
+## Cuelist
+```mod.tdpTauCeti.PresetCuelist```
+The cuelist allows for a structured recalling of cues.
+
+## Chop Mapper
+```mod.tdpTauCeti.PresetChopMapper```
+The Chop Mapper allows to map any arbitrary chop-channels to recall a preset.
