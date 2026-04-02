@@ -173,7 +173,7 @@ Store_Preset( name:str, tag = '',preset_id = "") -> str:
 # Depending on the selected mode the id will be either completly random or based on the name
 # passed to the method.
 
-Recall_Preset( preset_id:str, time:float, curve = "s", load_stack = False):
+Recall_Preset( preset_id:str, time:float, curve = "s", load_stack = False) -> PresetRecall:
 # Recalls the preset in the given time. 
 # Load Stack will recall the parameters and settings of the preset and store them in to the stack.
 # Returns a "Recall" object which can used to control continuation via pause(), stop() or resume() 
@@ -197,3 +197,7 @@ The cuelist allows for a structured recalling of cues.
 ## Chop Mapper
 ```mod.tdpTauCeti.PresetChopMapper```
 The Chop Mapper allows to map any arbitrary chop-channels to recall a preset.
+
+## TweenCHOP
+```mod.tdpTauCeti.TweenCHOP```
+A wrapper arround the Tweener that allows you to generate channels and tween them using parameters. 
