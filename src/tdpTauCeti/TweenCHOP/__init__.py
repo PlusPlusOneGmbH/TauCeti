@@ -1,0 +1,22 @@
+'''Info Header Start
+Name : __init__
+Author : Wieland PlusPlusOne@AMB-ZEPH15
+Saveorigin : TauCeti_PresetSystem.toe
+Saveversion : 2025.32460
+Info Header End'''
+
+from pathlib import Path
+
+ToxFile = Path( Path(  __file__ ).parent, "TweenCHOP.tox" )
+DefaultGlobalOpShortcut = "TAUCETI_TWEENCHOP"
+
+
+from typing import TYPE_CHECKING, Union
+if TYPE_CHECKING:
+    from .extTweenChop import extTweenChop
+    class Typing(baseCOMP, extTweenChop):
+        pass
+else:
+    Typing = None
+
+__all__ = ["ToxFile", "Typing"]
