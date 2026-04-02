@@ -30,28 +30,6 @@ def snakeCaseToCamelcase( classObject ):
 				methodObject
 			)
 
-# This also is a testbench and will be implemented in a third party package.
-
-def ensure_external(filepath, opshortcut, root_comp:COMP = root):
-
-	if (_potentialy:= getattr(op, opshortcut, None)) is not None:
-		return _potentialy
-
-	current_comp = root_comp
-	for path_element in environ.get("ENSURE_UTILITY_PATH", "utils").strip("/ ").split("/"):
-		current_comp = current_comp.opex( path_element ).asType(COMP) or current_comp.create( baseCOMP, path_element)
-
-	newly_loaded 							= current_comp.loadTox(filepath)
-	newly_loaded.name 						= opshortcut
-	newly_loaded.par.opshortcut.val 		= opshortcut
-	newly_loaded.par.externaltox.val 		= Path(filepath).relative_to( Path(".").absolute() )
-	newly_loaded.par.enableexternaltox.val 	= True
-	newly_loaded.par.savebackup.val 		= False
-	newly_loaded.par.reloadcustom.val 		= False
-	newly_loaded.par.reloadbuiltin.val 		= False
-	newly_loaded.par.enableexternaltoxpulse.pulse()
-	
-	return newly_loaded
 
 
 class PresetDoesNotExist(Exception):
@@ -121,16 +99,24 @@ class extTauCetiManager:
 		self.ownerComp 		= ownerComp
 		# self.stack     		= self.ownerComp.ext.extParStack # ????
 		# self.tweener   		= self.ownerComp.op('olib_dependancy').Get_Component()
+		
+		self.logger 			= self.ownerComp.op("logger")
+		
 		try:
-			from tdpTauCeti.Tweener import ToxFile as TweenerToxFile
-			self.tweener	= cast(extTweener, ensure_external(TweenerToxFile, "TAUCETI_TWEENER"))
+			#from tdpTauCeti.Tweener import ToxFile as TweenerToxFile
+			#self.tweener	= cast(extTweener, ensure_external(TweenerToxFile, "TAUCETI_TWEENER"))
+			from touchutilcollection.ensure import ensure_global_tdp
+			from tdpTauCeti import Tweener
+			self.tweener = ensure_global_tdp( Tweener, cast_as=Tweener.Typing )
+			self.logger.Log("Importing via TUC")
 		except ModuleNotFoundError:
 			self.tweener:extTweener = self.ownerComp.op("remote_dependency").GetGlobalComponent()
 			# We will use this as a fallback still for folks not using state of the art packagaging technology
 			# brought to you in 3D
+			self.logger.Log("Imported from RemoteDependency")
 
 		self.preview:TOP 		= self.ownerComp.op("previews")
-		self.logger 			= self.ownerComp.op("logger")
+		
 		self.prefab 			= self.ownerComp.op("emptyPreset")
 		self.Record_Preset		= self.Store_Preset
 		self.PresetDoesNotExist = PresetDoesNotExist
