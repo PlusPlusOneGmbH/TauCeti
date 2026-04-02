@@ -12,7 +12,7 @@ DefaultGlobalOpShortcut = "TAUCETI_TWEENER"
 from typing import TYPE_CHECKING, Union
 if TYPE_CHECKING:
     from .extTweener import extTweener
-    class typing(baseCOMP, extTweener):
+    class Typing(baseCOMP, extTweener):
         pass
 else:
     Typing = None
