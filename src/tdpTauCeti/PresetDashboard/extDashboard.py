@@ -1,12 +1,17 @@
 '''Info Header Start
 Name : extDashboard
-Author : Wieland PlusPlusOne@AMB-ZEPH15
+Author : wieland@plusplus.one
 Saveorigin : TauCeti_PresetSystem.toe
 Saveversion : 2025.32460
 Info Header End'''
 
-
 import uuid
+
+
+class tableDAT_proxy(tableDAT):
+	def __getitem__(self, key) -> Cell: # pyright: ignore[reportReturnType]
+		pass
+
 
 class extDashboard:
 
@@ -35,7 +40,7 @@ class extDashboard:
 
 	@property
 	def map_table(self):
-		return self.bank_comp.op("data")
+		return self.bank_comp.opex("data").asType( tableDAT_proxy )
 	
 	def New_Bank(self):
 		new_bank = self.Banks.copy( self.ownerComp.op("prefab_bank") )

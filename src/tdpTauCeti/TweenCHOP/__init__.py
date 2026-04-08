@@ -6,14 +6,15 @@ Saveversion : 2025.32460
 Info Header End'''
 
 from pathlib import Path
-ToxFile = Path( Path(  __file__ ).parent, "PresetCuelist.tox" )
-DefaultGlobalOpShortcut = "TAUCETI_PRESETCUELIST"
+
+ToxFile = Path( Path(  __file__ ).parent, "TweenCHOP.tox" )
+DefaultGlobalOpShortcut = "TAUCETI_TWEENCHOP"
 
 
 from typing import TYPE_CHECKING, Union
 if TYPE_CHECKING:
-    from .extCuelist import extCuelist
-    class Typing(baseCOMP, extCuelist):
+    from .extTweenChop import extTweenChop
+    class Typing(baseCOMP, extTweenChop):
         pass
 else:
     class Typing:

@@ -1,8 +1,3 @@
-
-
-
-
-
 '''Info Header Start
 Name : extTweener
 Author : Wieland PlusPlusOne@AMB-ZEPH15
@@ -10,7 +5,8 @@ Saveorigin : TauCeti_PresetSystem.toe
 Saveversion : 2023.12000
 Info Header End'''
 
-from td import *
+from td import * # pyright: ignore[reportMissingImports]
+
 # TD specific import shenaningans.
 if __package__ is None:
 	import TweenObject
@@ -35,8 +31,15 @@ def _emptyCallback( value:TweenObject._tween ):
 	pass
 
 _type = type
-PotentialCurves = Union[ str, Literal["s", "LinearInterpolation", "QuadraticEaseIn", "QuadraticEaseOut", "BackEaseIn", "BounceEaseIn"] ]
 
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+	from .curves.extCurve import available_curves
+	PotentialCurves = available_curves
+	from .TweenValue import TweenableValue
+else:
+	PotentialCurves = Union[ str, Literal["s", "LinearInterpolation", "QuadraticEaseIn", "QuadraticEaseOut", "BackEaseIn", "BounceEaseIn"] ]
 
 
 class AbsoluteTweenDefinition(TypedDict):
@@ -180,7 +183,7 @@ class extTweener:
 			end = float( end ) # If we get a str value (or similiar) as the target value, we can make sure that we are fading non the less. Not perfect :()
 
 
-		targetValue	:TweenValue._tweenValue 	= TweenValue.tweenValueFromArguments( parameter, mode, expression, end )
+		targetValue	:TweenValue._tweenValue 	= TweenValue.tweenValueFromArguments( parameter, str(mode), expression, end )
 		startValue	:TweenValue._tweenValue 	= TweenValue.tweenValueFromParameter( parameter )
 
 		tweenClass: Type[TweenObject._tween]	 = getattr( TweenObject, type, TweenObject.startsnap )

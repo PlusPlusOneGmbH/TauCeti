@@ -1,5 +1,5 @@
 # Makre sure subpackages are imported so they can be accesses via the mod. method.
-from . import PresetManager, Tweener, PresetDashboard, PresetCuelist, PresetChopMapper
+from . import PresetManager, Tweener, PresetDashboard, PresetCuelist, PresetChopMapper, TweenCHOP
 
 
 # Future Proofing
@@ -11,5 +11,6 @@ _ToxFiles = {
     "Tweener" : Tweener.ToxFile,
     "PresetDashboard" : PresetDashboard.ToxFile,
     "PresetCuelist" : PresetCuelist.ToxFile,
-    "PresetChopMapper" : PresetChopMapper.ToxFile
+    "PresetChopMapper" : PresetChopMapper.ToxFile,
+    "TweenCHOP" : TweenCHOP.ToxFile
 }

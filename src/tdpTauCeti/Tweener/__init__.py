@@ -9,12 +9,14 @@ ToxFile = Path( Path(  __file__ ).parent, "Tweener.tox" )
 DefaultGlobalOpShortcut = "TAUCETI_TWEENER"
 
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from .extTweener import extTweener
     class Typing(baseCOMP, extTweener):
         pass
 else:
-    Typing = None
-
+    class Typing:
+        pass
+    
 __all__ = ["ToxFile", "Typing"]

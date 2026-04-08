@@ -4,16 +4,16 @@ requires-python = ">=3.11"
 
 [[package]]
 name = "monkeybrain"
-version = "0.3.1"
+version = "0.3.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "python-dotenv" },
     { name = "pywin32" },
     { name = "toml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/88/13/dc0286a22fef76b3a40f78dd6c1f59f3f64414853ea55aee5885f9f225b9/monkeybrain-0.3.1.tar.gz", hash = "sha256:1e93d09bc54dd411a71d7f78c1128f4a457b006169b45fe850b7fa6ddcbcade3", size = 11623, upload-time = "2026-01-22T15:47:46.51Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d8/aa/d01214466d4719e0f559a258b6a61511ee98c211293d21cd43238e9f0964/monkeybrain-0.3.3.tar.gz", hash = "sha256:0823264e7cdc1251b57e55fdba806a099cce0cf5ec09dd0a6a7b9c6cc7d67829", size = 14049, upload-time = "2026-04-08T09:05:27.875Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d4/e4/8a548312ab24511535b8f49709562e08556e1af425215df81e6409385d0d/monkeybrain-0.3.1-py3-none-any.whl", hash = "sha256:a6d1e84df3532deb12f84176e1d78c0b6eaa5c85240ba035da058f9ef2fdce30", size = 11787, upload-time = "2026-01-22T15:47:34.332Z" },
+    { url = "https://files.pythonhosted.org/packages/14/66/b4296a3de0ecfad7235bd460dd40b29bc662761f31fce90774d40fb87067/monkeybrain-0.3.3-py3-none-any.whl", hash = "sha256:13edadc18ea1a37ba75a5ec6f535d3f72ff00793ff3877a979ce8a8036ca2731", size = 14241, upload-time = "2026-04-08T09:05:28.747Z" },
 ]
 
 [[package]]
@@ -46,7 +46,7 @@ wheels = [
 
 [[package]]
 name = "tdp-tauceti"
-version = "5.1.13"
+version = "5.1.14"
 source = { editable = "." }
 
 [package.dev-dependencies]
@@ -59,7 +59,7 @@ dev = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "monkeybrain", specifier = ">=0.3.0" },
+    { name = "monkeybrain", specifier = ">=0.3.3" },
     { name = "tdp-touchutilcollection", specifier = ">=0.7.3" },
 ]
 

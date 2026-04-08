@@ -6,8 +6,8 @@ Saveversion : 2025.32460
 Info Header End'''
 
 from pathlib import Path
-ToxFile = Path( Path(  __file__ ).parent, "extPresetMapper.py.tox" )
-DefaultGlobalOpShortcut = "TAUCETI_PRESETMAPPER"
+ToxFile = Path( Path(  __file__ ).parent, "PresetChopMapper.tox" )
+DefaultGlobalOpShortcut = "TAUCETI_PRESETCHOPMAPPER"
 
 
 from typing import TYPE_CHECKING
@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     class Typing(baseCOMP):
         pass
 else:
-    Typing = None
+    class Typing:
+        pass
 
 __all__ = ["ToxFile", "Typing"]

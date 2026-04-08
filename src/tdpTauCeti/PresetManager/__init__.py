@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     class Typing(containerCOMP, extParStack, extTauCetiManager):
         pass
 else:
-    Typing = None
+    class Typing:
+        pass
 
 __all__ = ["ToxFile", "Typing"]
