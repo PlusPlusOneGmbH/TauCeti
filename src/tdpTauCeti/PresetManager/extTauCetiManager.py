@@ -1,8 +1,6 @@
-
-
 '''Info Header Start
 Name : extTauCetiManager
-Author : Wieland PlusPlusOne@AMB-ZEPH15
+Author : wieland@plusplus.one
 Saveorigin : TauCeti_PresetSystem.toe
 Saveversion : 2025.32460
 Info Header End'''
@@ -12,12 +10,16 @@ from td import * # pyright: ignore[reportMissingImports]
 from typing import Literal, Union
 from typing import  TYPE_CHECKING, Any, cast
 
+
+
 if TYPE_CHECKING:   
 	from tdpTauCeti.Tweener.extTweener import extTweener
 	from tdpTauCeti.Tweener.TweenObject import _tween
+	from tdpTauCeti.Tweener.curves.extCurve import available_curves
 else:
 	extTweener = Any
 	_tween = Any
+	available_curves = Any
 
 def snakeCaseToCamelcase( classObject ):
 	import inspect
@@ -109,6 +111,7 @@ class extTauCetiManager:
 			from tdpTauCeti import Tweener
 			self.tweener = ensure_global_tdp( Tweener, cast_as=Tweener.Typing )
 			self.logger.Log("Importing via TUC")
+			
 		except ModuleNotFoundError:
 			self.tweener:extTweener = self.ownerComp.op("remote_dependency").GetGlobalComponent()
 			# We will use this as a fallback still for folks not using state of the art packagaging technology
@@ -291,9 +294,9 @@ class extTauCetiManager:
 			except AttributeError:
 				continue
 
-	def Recall_Preset(self,preset_id:str, time:float, curve = "s", load_stack = False):
+	def Recall_Preset(self,preset_id:str, time:float, curve:available_curves = "s", load_stack:bool = False):
 		
-		preset_comp = self.preset_folder.op(preset_id )
+		preset_comp = self.preset_folder.op( preset_id )
 		self.logger.Log("Recalling preset", preset_id, time, curve, load_stack)
 		
 		if not preset_comp: 

@@ -1,8 +1,3 @@
-
-
-
-
-
 '''Info Header Start
 Name : extTweener
 Author : Wieland PlusPlusOne@AMB-ZEPH15
@@ -35,8 +30,14 @@ def _emptyCallback( value:TweenObject._tween ):
 	pass
 
 _type = type
-PotentialCurves = Union[ str, Literal["s", "LinearInterpolation", "QuadraticEaseIn", "QuadraticEaseOut", "BackEaseIn", "BounceEaseIn"] ]
 
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+	from .curves.extCurve import available_curves
+	PotentialCurves = available_curves
+else:
+	PotentialCurves = Union[ str, Literal["s", "LinearInterpolation", "QuadraticEaseIn", "QuadraticEaseOut", "BackEaseIn", "BounceEaseIn"] ]
 
 
 class AbsoluteTweenDefinition(TypedDict):
