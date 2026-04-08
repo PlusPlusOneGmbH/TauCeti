@@ -4,6 +4,16 @@ Author : wieland@plusplus.one
 Saveorigin : TauCeti_PresetSystem.toe
 Saveversion : 2025.32460
 Info Header End'''
+
+
+from typing import TypedDict, Union, NotRequired
+
+class Cuelist_Entry(TypedDict):
+	id : NotRequired[str]
+	comment : NotRequired[str]
+	preset : NotRequired[str]
+	time : NotRequired[float]
+
 class extCuelist:
 	"""
 	extCuelist description
@@ -29,7 +39,7 @@ class extCuelist:
 
 
 
-	def Reorder(self, source_row_index, target_slot_index):
+	def Reorder(self, source_row_index:int, target_slot_index:int):
 		if source_row_index > target_slot_index:
 			nextIndex = target_slot_index
 			prevIndex = target_slot_index - 1
@@ -37,12 +47,12 @@ class extCuelist:
 			nextIndex = target_slot_index + 1
 			prevIndex = target_slot_index
 
-		next_item_data = self.data.GetItem( 
+		next_item_data:dict = self.data.GetItem( 
 			tdu.clamp( nextIndex ,1, self.data.NumItems ),
 			rows = "id"
 	    )
 
-		prev_item_data = self.data.GetItem( 
+		prev_item_data:dict = self.data.GetItem( 
 			tdu.clamp( prevIndex ,1, self.data.NumItems ),
 			rows = "id"
 		)
@@ -72,7 +82,7 @@ class extCuelist:
 		self.data.SortTable( key = lambda row: float(row[0]))
 		self.Select_Next_Cue()
 
-	def Append_Cue(self, preset, time = None):
+	def Append_Cue(self, preset:str, time:Union[None, float] = None):
 		new_id =  math.floor( 
 				float(self.data.GetItem(-1)["id"])
 			) + 1 if self.data.NumItems else 1.0
@@ -110,7 +120,7 @@ class extCuelist:
 		)
 	
 
-	def Recall_Cue(self, cue_id, time = None):
+	def Recall_Cue(self, cue_id:str, time = None):
 		cueData = self.data.GetItem( cue_id )
 		
 		self.get_engine().Recall_Preset(cueData["preset"], time or cueData["time"])
@@ -148,22 +158,22 @@ class extCuelist:
 		)
 		self.ownerComp.op("recalled_cues").deleteRow( str( event_id) )
 
-	def Update_Cue(self, cue_id, dataset:dict):
+	def Update_Cue(self, cue_id:str, dataset:Cuelist_Entry):
 		self.data.UpdateItem(cue_id, {
 			**self.data.GetItem(cue_id),
 			**dataset }
 		)
 
-	def Assign_Preset(self, cue_id, preset):
+	def Assign_Preset(self, cue_id:str, preset:str):
 		self.Update_Cue(cue_id, {"preset" : preset})
 
-	def Assign_Time(self, cue_id, time):
+	def Assign_Time(self, cue_id:str, time):
 		self.Update_Cue(cue_id, {"time" : time})
 
-	def Assign_Comment(self, cue_id, comment):
+	def Assign_Comment(self, cue_id:str, comment:str):
 		self.Update_Cue(cue_id, {"comment" : comment })
 
-	def Assign_cue_id(self, cue_id, newcue_id):
+	def Assign_cue_id(self, cue_id:str, newcue_id:str):
 		self.Update_Cue(cue_id, {"id" : newcue_id})
 		self.Sort()
 
