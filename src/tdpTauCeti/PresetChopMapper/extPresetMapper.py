@@ -1,6 +1,6 @@
 '''Info Header Start
 Name : extPresetMapper
-Author : Wieland PlusPlusOne@AMB-ZEPH15
+Author : wieland@plusplus.one
 Saveorigin : TauCeti_PresetSystem.toe
 Saveversion : 2025.32460
 Info Header End'''

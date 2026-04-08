@@ -1,9 +1,10 @@
 '''Info Header Start
 Name : extTweenChop
-Author : Wieland PlusPlusOne@AMB-ZEPH15
+Author : wieland@plusplus.one
 Saveorigin : TauCeti_PresetSystem.toe
 Saveversion : 2025.32460
 Info Header End'''
+
 from touchutilcollection.ensure import ensure_global_tdp
 from tdpTauCeti import Tweener
 
