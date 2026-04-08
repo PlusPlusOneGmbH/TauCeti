@@ -11,10 +11,8 @@ from asyncio import sleep
 from typing import cast, Union, TYPE_CHECKING, Any
 
 # Recommend using the TYPE_CHECKING route here 
-if TYPE_CHECKING:   
-    from TauCeti.Tweener.extTweener import extTweener
-else:
-    extTweener = Any
+
+from tdpTauCeti import Tweener
 
 # Typing Definitions
 
@@ -25,8 +23,9 @@ class TestParDef:
 class TestComp:
     par : TestParDef
 
-tweener = cast( extTweener, op("Tweener") )
+tweener = opex("Tweener").asType( Tweener.Typing )
 parComp = cast( Union[TestComp, COMP], op("parameter1") )
+
 
 # Test Routine
 
@@ -75,6 +74,3 @@ async def naiveTweenerTest():
 
     assert parComp.par.Float1.eval() == 1 and  parComp.par.Float2.eval() == 1
     
-# Execute Routine
-
-op("TDAsyncIO").Run( naiveTweenerTest() )  # type: ignore

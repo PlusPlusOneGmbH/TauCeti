@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     class Typing(baseCOMP):
         pass
 else:
-    Typing = None
+    class Typing:
+        pass
 
 __all__ = ["ToxFile", "Typing"]
