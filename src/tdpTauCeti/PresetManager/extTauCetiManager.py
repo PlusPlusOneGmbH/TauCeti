@@ -41,7 +41,6 @@ from asyncio import gather
 from dataclasses import dataclass
 
 
-
 @dataclass
 class PresetRecall:
 	name : str
@@ -132,6 +131,28 @@ class extTauCetiManager:
 	@property
 	def preset_folder(self):
 		return self.ownerComp.op("Presetfolder_RepoMaker").Repo
+
+	@property
+	def PresetParMenuObject(self):
+		return tdu.TableMenu(
+			self.ownerComp.opex("id_to_name").asType(tableDAT), labelCol = "name"
+		)
+
+	@property
+	def Curves(self) -> List[str]:
+		"""
+			Returns a list of all available curves that are selectable.
+		"""
+		return self.Tweener.op("curves").Curves
+
+	@property
+	def CurvesParMenu(self):
+		"""
+			Returns a ParMenu Object that can be used as a selector
+		"""
+		return tdu.ParMenu(
+			self.Curves
+		)
 
 	def Find_Presets(self, name:str="", tag:str="") -> list[str]:
 		"""
@@ -423,8 +444,3 @@ class extTauCetiManager:
 
 		return
 
-	@property
-	def PresetParMenuObject(self):
-		return tdu.TableMenu(
-			self.ownerComp.opex("id_to_name").asType(tableDAT), labelCol = "name"
-		)
