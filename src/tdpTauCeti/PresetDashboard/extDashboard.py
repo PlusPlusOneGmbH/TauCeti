@@ -92,7 +92,7 @@ class extDashboard:
 
 	def check_bank(self):
 		if self.ownerComp.par.Selectedbank.eval(): return
-		repo = self.ownerComp.op("repository_comp").Get_Repository()
+		repo = self.Banks
 		children = repo.findChildren( depth = 1, type = COMP)
 		if children: 
 			self.ownerComp.par.Selectedbank = children[0]

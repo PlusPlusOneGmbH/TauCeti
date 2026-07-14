@@ -1,6 +1,6 @@
 [project]
 name = "tdp-TauCeti"
-version = "5.1.14"
+version = "5.1.15"
 description = "Presetmanagement and parameer manipulation in TouchDesigner."
 readme = "README.md"
 license-files = [ "LICENSE",]
@@ -16,7 +16,7 @@ requires = [ "setuptools>=61.0",]
 build-backend = "setuptools.build_meta"
 
 [dependency-groups]
-dev = [ "monkeybrain>=0.3.3", "tdp-touchutilcollection>=0.7.3",]
+dev = [ "monkeybrain>=0.3.4", "tdp-touchutilcollection>=0.7.3",]
 
 [project.urls]
 Website = "https://plusplus.one"
@@ -25,7 +25,7 @@ Repository = "https://github.com/PlusPlusOneGmbH/TD_TauCeti_Presetsystem"
 [tool.monkeybrain]
 projectfile = "TauCeti_PresetSystem.toe"
 enforce-version = "latest-build"
-touchdesigner-version = "2025.32280"
+touchdesigner-version = "2025.32820"
 
 [tool.touchdesigner.TDPyEnvManagerContext]
 contextVersion = 2
