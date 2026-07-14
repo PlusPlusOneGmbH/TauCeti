@@ -41,7 +41,6 @@ from asyncio import gather
 from dataclasses import dataclass
 
 
-
 @dataclass
 class PresetRecall:
 	name : str
@@ -109,11 +108,11 @@ class extTauCetiManager:
 			#self.tweener	= cast(extTweener, ensure_external(TweenerToxFile, "TAUCETI_TWEENER"))
 			from touchutilcollection.ensure import ensure_global_tdp
 			from tdpTauCeti import Tweener
-			self.tweener = ensure_global_tdp( Tweener, cast_as=Tweener.Typing )
+			self.Tweener = ensure_global_tdp( Tweener, cast_as=Tweener.Typing )
 			self.logger.Log("Importing via TUC")
 			
 		except ModuleNotFoundError:
-			self.tweener:extTweener = self.ownerComp.op("remote_dependency").GetGlobalComponent()
+			self.Tweener:extTweener = self.ownerComp.op("remote_dependency").GetGlobalComponent()
 			# We will use this as a fallback still for folks not using state of the art packagaging technology
 			# brought to you in 3D
 			self.logger.Log("Imported from RemoteDependency")
@@ -132,6 +131,28 @@ class extTauCetiManager:
 	@property
 	def preset_folder(self):
 		return self.ownerComp.op("Presetfolder_RepoMaker").Repo
+
+	@property
+	def PresetParMenuObject(self):
+		return tdu.TableMenu(
+			self.ownerComp.opex("id_to_name").asType(tableDAT), labelCol = "name"
+		)
+
+	@property
+	def Curves(self) -> List[str]:
+		"""
+			Returns a list of all available curves that are selectable.
+		"""
+		return self.Tweener.op("curves").Curves
+
+	@property
+	def CurvesParMenu(self):
+		"""
+			Returns a ParMenu Object that can be used as a selector
+		"""
+		return tdu.ParMenu(
+			self.Curves
+		)
 
 	def Find_Presets(self, name:str="", tag:str="") -> list[str]:
 		"""
@@ -336,7 +357,7 @@ class extTauCetiManager:
 				continue
 
 			tweens.append(
-				self.tweener.CreateTween(
+				self.Tweener.CreateTween(
 					target_parameter, 
 					block.par.Value.eval(), 
 					time, 
@@ -423,8 +444,3 @@ class extTauCetiManager:
 
 		return
 
-	@property
-	def PresetParMenuObject(self):
-		return tdu.TableMenu(
-			self.ownerComp.opex("id_to_name").asType(tableDAT), labelCol = "name"
-		)

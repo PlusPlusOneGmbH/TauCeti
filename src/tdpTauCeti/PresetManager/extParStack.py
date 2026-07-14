@@ -9,13 +9,13 @@ Info Header End'''
 
 
 
-from td import *
+from td import * # pyright: ignore[reportMissingImports]
 if __package__:
 	from . import ParUtils
 else:
 	import ParUtils
 
-from typing import TypedDict, Union, Any, Literal, List, TYPE_CHECKING
+from typing import TypedDict, Union, Any, Literal, Optional
 
 class StackElement(TypedDict):
 	Type : Literal["fade", "startsnap", "endsnap"]
@@ -69,8 +69,9 @@ class extParStack:
 			return self.ownerComp.op("Stack_RepoMaker").Repo.relativePath( operator )
 		return operator.path
 
-	def get_fade_type(self, par):
-		if par.style in self.fadeable: return 'fade'
+	def get_fade_type(self, par:Par):
+		if isinstance( par.default, (float, int)): return "fade"
+		# if par.style in self.fadeable: return 'fade'
 		return  'startsnap'
 
 	def get_op_from_path(self, path):
@@ -105,7 +106,7 @@ class extParStack:
 		item_block.par.Parname.val = parameter.name
 		item_block.par.Type.val = fade_type if fade_type else self.get_fade_type( parameter )
 	
-	def Get_Stack_Element_Dict(self, index) -> StackElement:
+	def Get_Stack_Element_Dict(self, index) -> Optional[StackElement]:
 		block = self.items[index]
 		parameter = block.par.Parameter.eval()
 		if parameter is None: 
@@ -121,6 +122,7 @@ class extParStack:
 		}
 	
 	def Refresh_Stack(self):
+		raise NotImplemented()
 		temp_list = self.Get_Stack_Dict_List()
 		self.Clear_Stack()
 		for element in temp_list:
@@ -128,7 +130,7 @@ class extParStack:
 		return
 
 	def Get_Stack_Dict_List(self) -> List[StackElement]:
-		return [ self.Get_Stack_Element_Dict(index) for index in range(0, self.items.numBlocks)]
+		return [element for element in [ self.Get_Stack_Element_Dict(index) for index in range(0, self.items.numBlocks) ] if element is not None ]
 
 	def Remove_Row_From_Stack(self, index):
 		if self.items.numBlocks > 1:

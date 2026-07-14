@@ -4,16 +4,16 @@ requires-python = ">=3.11"
 
 [[package]]
 name = "monkeybrain"
-version = "0.3.3"
+version = "0.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "python-dotenv" },
     { name = "pywin32" },
     { name = "toml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d8/aa/d01214466d4719e0f559a258b6a61511ee98c211293d21cd43238e9f0964/monkeybrain-0.3.3.tar.gz", hash = "sha256:0823264e7cdc1251b57e55fdba806a099cce0cf5ec09dd0a6a7b9c6cc7d67829", size = 14049, upload-time = "2026-04-08T09:05:27.875Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/72/d9/18101eace44dac53c004cd775aa7d590057a8b5ae57389f21bb887868c8f/monkeybrain-0.4.0.tar.gz", hash = "sha256:b6741514e650a54fb8193a0e0127b7602dbf25fc67e8584a03cbb61b8f2b5ebb", size = 14685, upload-time = "2026-05-13T12:34:27.736Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/14/66/b4296a3de0ecfad7235bd460dd40b29bc662761f31fce90774d40fb87067/monkeybrain-0.3.3-py3-none-any.whl", hash = "sha256:13edadc18ea1a37ba75a5ec6f535d3f72ff00793ff3877a979ce8a8036ca2731", size = 14241, upload-time = "2026-04-08T09:05:28.747Z" },
+    { url = "https://files.pythonhosted.org/packages/7f/23/452a5b67a63dbed735979c1ff80bf9b7cbf3a23765d0068f0bdc789d0dfd/monkeybrain-0.4.0-py3-none-any.whl", hash = "sha256:2af6bb32264f81a28660be2f1acaa1ce2563760709245fb1122021ab71252260", size = 14857, upload-time = "2026-05-13T12:34:28.524Z" },
 ]
 
 [[package]]
@@ -59,7 +59,7 @@ dev = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "monkeybrain", specifier = ">=0.3.3" },
+    { name = "monkeybrain", specifier = ">=0.3.4" },
     { name = "tdp-touchutilcollection", specifier = ">=0.7.3" },
 ]
 
